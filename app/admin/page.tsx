@@ -62,65 +62,81 @@ export default function AdminPage() {
   const visible = filter === 'all' ? tasks : tasks.filter((t) => t.status === filter)
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
-            <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
+    <main className="min-h-screen bg-[#f3f5f2]">
+      <header className="border-b border-slate-200/80 bg-white/85 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-800 text-sm font-bold text-white">T</span>
+            <div>
+              <p className="font-bold tracking-tight text-slate-900">Taskflow</p>
+              <p className="text-xs text-slate-500">Workspace overview</p>
+            </div>
+            <span className="ml-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800">
               Admin
             </span>
           </div>
           <button
             onClick={handleLogout}
-            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
           >
             Log out
           </button>
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-        {/* Summary */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mx-auto max-w-6xl space-y-8 px-5 py-9 sm:px-8 sm:py-12">
+        <section>
+          <p className="text-sm font-semibold text-emerald-800">Team activity</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Admin dashboard</h1>
+          <p className="mt-2 text-sm text-slate-500">A clear view of tasks across your workspace.</p>
+        </section>
+
+        <section aria-label="Task summary" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { label: 'Total', value: tasks.length },
-            { label: 'Pending', value: count('pending') },
-            { label: 'In progress', value: count('in_progress') },
-            { label: 'Done', value: count('done') },
+            { label: 'Total tasks', value: tasks.length, tone: 'bg-slate-100 text-slate-700' },
+            { label: 'To do', value: count('pending'), tone: 'bg-amber-50 text-amber-700' },
+            { label: 'In progress', value: count('in_progress'), tone: 'bg-blue-50 text-blue-700' },
+            { label: 'Completed', value: count('done'), tone: 'bg-emerald-50 text-emerald-700' },
           ].map((item) => (
-            <div key={item.label} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-              <p className="text-sm text-gray-500">{item.label}</p>
-              <p className="text-2xl font-bold text-gray-900">{item.value}</p>
+            <div key={item.label} className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
+              <div className={`inline-flex rounded-lg px-2.5 py-1 text-xs font-semibold ${item.tone}`}>{item.label}</div>
+              <p className="mt-3 text-3xl font-bold tracking-tight text-slate-900">{item.value}</p>
             </div>
           ))}
-        </div>
+        </section>
 
-        {/* Filter */}
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-gray-900">All tasks</h2>
+        <section className="space-y-4">
+          <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-slate-900">All tasks</h2>
+              <p className="mt-1 text-sm text-slate-500">Review progress and update task statuses.</p>
+            </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value as 'all' | TaskStatus)}
-            className="rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            aria-label="Filter tasks by status"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 outline-none transition focus:border-emerald-700 focus:ring-4 focus:ring-emerald-700/10"
           >
             <option value="all">All statuses</option>
             <option value="pending">Pending</option>
             <option value="in_progress">In progress</option>
             <option value="done">Done</option>
           </select>
-        </div>
+          </div>
 
         {error && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+          <p role="alert" className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
         )}
 
         {loading ? (
-          <p className="text-center text-gray-500">Loading tasks...</p>
+          <div className="rounded-2xl border border-slate-200/80 bg-white px-6 py-12 text-center text-sm text-slate-500 shadow-sm">Loading tasks...</div>
         ) : visible.length === 0 ? (
-          <p className="text-center text-gray-500">No tasks found.</p>
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white/70 px-6 py-14 text-center">
+            <h3 className="font-semibold text-slate-900">Nothing to show</h3>
+            <p className="mt-1 text-sm text-slate-500">No tasks match this status filter.</p>
+          </div>
         ) : (
-          <div className="grid gap-3 lg:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
             {visible.map((task) => (
               <TaskCard
                 key={task.id}
@@ -132,6 +148,7 @@ export default function AdminPage() {
             ))}
           </div>
         )}
+        </section>
       </div>
     </main>
   )
